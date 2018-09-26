@@ -110,7 +110,7 @@ public class RotaterSystem_Pure : JobComponentSystem
 }
 ```
 
-Pure ECS의 경우 오브젝트에
+- Pure ECS의 경우 오브젝트에
 Rendrer Component -> MeshInstanceRendererComponent
 Transform Component -> Position & Rotation Component
 를 Attach해야 동작합니다.
@@ -174,16 +174,16 @@ class RotaterSystem : ComponentSystem
 
 #### 1. Unity Tehcnologies / EntitiyComponentSystemSamples
 - 유니티에서 제작한 ECS Sample 예제이며, 항상 최신버젼으로 업데이트됩니다.
-https://github.com/Unity-Technologies/EntityComponentSystemSamples
+  - https://github.com/Unity-Technologies/EntityComponentSystemSamples
 
 
 #### 2. stella3d / job - system - cookbook
 - 유니티에서 소개하는 C# Job System Sample 예제입니다.
-https://github.com/stella3d/job-system-cookbook
+  - https://github.com/stella3d/job-system-cookbook
 
 #### 3. KptEmreU / Roll - A - Ball - ECS - style
 - 어떤 개발자가 제작한 Pure ECS Style Roll a Ball 예제입니다.
-https://github.com/KptEmreU/Roll-A-Ball-ECS-style
+  - https://github.com/KptEmreU/Roll-A-Ball-ECS-style
 
 ---
 ### Youtube Video
@@ -192,15 +192,15 @@ https://github.com/KptEmreU/Roll-A-Ball-ECS-style
 
 #### 1. Unity / Overview - Intro To The Entity Component System And C# Job System 1/5
 - 유니티에서 ECS & Job System에 대해 개요부터 Classic ~ ECS & Job System 퍼포먼스 체크까지 설명합니다.
-- 7~11여분 정도 길이의 비디오가 총 5편으로 되어있으며, 코드보단 왜 ECS를 사용해야 하는지에 대해 초점이 맞춰져 있습니다.
- https://www.youtube.com/watch?v=WLfhUKp2gag&list=PLX2vGYjWbI0S4yHZwjDI1boIrYStpBCdN
+- 7~11여분 길이의 비디오가 총 5편으로, 코드보단 왜 ECS를 사용해야 하는지에 대해 초점이 맞춰져 있습니다.
+  - https://www.youtube.com/watch?v=WLfhUKp2gag&list=PLX2vGYjWbI0S4yHZwjDI1boIrYStpBCdN
 
 #### 2. Brackeys / New way of CODING in Unity! ECS Tutorial
 - 유니티 및 개발 전문 방송 Brackeys에서 설명하는 ECS 튜토리얼입니다.
 - 10분정도 길이이며, Hybrid ECS만 간단하게 설명합니다.
-https://www.youtube.com/watch?v=_U9wRgQyy6s
+  - https://www.youtube.com/watch?v=_U9wRgQyy6s
 
 #### 3. Infallible Code / Unity ECS Tutorial • Introduction
 - 유니티 및 개발 전문 방송 Infallible Code에서 설명하는 ECS 튜토리얼 입니다.
-- 10여분 정도 길이의 비디오가 총 7편으로 되어있으며, Hybrid ~ Pure ECS, Job System까지 슈팅게임 제작 기준으로 설명합니다.
-https://www.youtube.com/watch?v=yzhsgaFVpZY
+- 10여분 정도 길이의 비디오가 총 7편으로, Hybrid ~ Pure ECS, Job System까지 슈팅게임 제작 기준으로 설명합니다.
+  - https://www.youtube.com/watch?v=yzhsgaFVpZY
