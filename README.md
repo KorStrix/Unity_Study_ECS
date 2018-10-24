@@ -34,86 +34,113 @@ Unity는 ECS를 통해 오브젝트 중심의 디자인에서 데이터 중심�
 - Visual Studio 최신으로 설치
 ( VS 버젼이 오래되었을 경우 Unity 컴파일러와 VS 컴파일러가 따로 구동되어 VS에서 ECS 관련 스크립트 작성 불가 )
 
-- 추천 개발 세팅 비디오 - Brackeys / New way of CODING in Unity! ECS Tutorial
-https://www.youtube.com/watch?v=_U9wRgQyy6s
+- 추천 개발 세팅 비디오
+  - Brackeys / New way of CODING in Unity! ECS Tutorial
+  - https://www.youtube.com/watch?v=_U9wRgQyy6s
 
 ### ECS 장단점
 
 #### 장점
 
-- 데이터 지향 개발을 사용하기 때문에, CPU 캐쉬메모리와 멀티 쓰레딩에 친화적이다. ( 성능 UP )
-- 개발이 진행됨에 따라 생기는 예기치 못한 기능 추가 및 변경에 대해 보다 빠르게 대처할 수 있다.
-- 코드의 상호 의존성이 없어 코드를 재사용하기 용이하다.
-- 위와 마찬가지로 상호 의존성이 없어, 전체적으로 코드가 짧아져 코드 분석 및 유지보수가 용이하다.
+- 데이터 지향 개발을 사용하기 때문에, CPU 캐쉬메모리와 멀티 쓰레딩에 친화적. ( 성능 UP )
+- 개발이 진행됨에 따라 생기는 예기치 못한 기능 추가 및 변경에 대해 보다 빠르게 대처할 수 있음.
+- 코드의 상호 의존성이 없어 코드를 재사용하기 용이.
+- 위와 마찬가지로 상호 의존성이 없어, 전체적으로 코드가 짧아져 코드 분석 및 유지보수가 용이.
 
 ![](https://pbs.twimg.com/media/DTOOMadX0AEdkVH.jpg)
 사진 출처 유니티 테크니컬 에반젤리스트 Mike Geig 트윗 : https://twitter.com/mikegeig/status/951260836538003458
 
 #### 단점
 
-- 기존 객체 지향 개발 방식 **(OOP Object Oriented Develop)** 을 버리고 새로운 설계방식 **(DOP(Data Oriented Develop) - 데이터 지향 개발)** 을 사용해야 하기 때문에, 학습 및 개발 비용이 생긴다.
-- 나온지 얼마 안된 기능으로, Research & Develop하기가 힘들다.
-- Physics관련 기능을 ECS로 사용할 수 없다.
+- 기존 객체 지향 개발 방식 **(OOP Object Oriented Develop)** 을 버리고 새로운 설계방식 **(DOP(Data Oriented Develop) - 데이터 지향 개발)** 을 사용해야 하기 때문에, 학습 및 개발 비용이 생김.
+- 나온지 얼마 안된 기능으로, Research & Develop하기가 힘듦.
+- Physics관련 기능을 ECS로 사용할 수 없음.
 
 - 디버깅 관련
-  - VS 디버그 - 중단점 기능을 지원하지 않는다. ( 시도 시 VS 멈춤 & 유니티 응답 없음 )
+  - VS 디버그 - 중단점 기능을 지원하지 않음. ( 시도 시 VS 멈춤 & 유니티 응답 없음 )
   - Classic처럼 게임을 중단하여 렌더링 된 오브젝트를 클릭 시 오브젝트를 선택할 수 없다. ( Entity Debug - Entity를 선택해야 한다. )
-  - Job System을 사용할 경우 멀티 스레딩 방식이기에 디버깅하기가 더 힘들다.
+  - Job System을 사용할 경우 멀티 스레딩 방식이기에 디버깅하기가 더 힘듦.
 
 #### 결론
 
 - **장단점은 결국 OOP와 DOP의 차이점이다.**
-- 모든 스크립트를 ECS 기반으로 설계하는 것은 비효율적이다.
-  - 대규모 오브젝트(성능을 요하는) 혹은 UI(재사용을 요하는)부분에만 ECS로 구현하는것이 좋다.
-  - 절차위주나 그 외 **OCP(Open Close Principle, OOP - 개방 폐쇄의 원칙)** 을 적용하기 용이한 경우 - 구체적으로 게임 규칙의 경우 기존의 MonoBehaviour & Scriptable Object 방식으로 구현하는 것이 좋다.
+- 모든 스크립트를 ECS 기반으로 설계하는 것은 비효율적.
+  - 대규모 오브젝트(성능을 요하는) 혹은 UI(재사용을 요하는)부분에만 ECS로 구현하는것이 좋음.
+  - 절차위주나 그 외 **OCP(Open Close Principle, OOP - 개방 폐쇄의 원칙)** 을 적용하기 용이한 경우 - 구체적으로 게임 규칙의 경우 기존의 MonoBehaviour & Scriptable Object 방식으로 구현하는 것이 좋음.
 
 
 ---
 ## ECS
 
-### ECS 예시
+### 문법
 
-#### Pure ECS
+#### ComponentData
+- 컴포넌트 데이터는 변수만 들고있는 데이터 단위입니다.
+- 권장 명명 규칙은 **~Component** 입니다.
+  - Ex ) MoveComponent, PositionComponent, RotationComponent 등
 ```csharp
-using Unity.Collections;
-using Unity.Entities;
-using Unity.Jobs;
-using Unity.Mathematics;
-using Unity.Transforms;
-using UnityEngine;
-
+// Pure ECS
 [System.Serializable]
-public struct Rotater_Pure : IComponentData
+public struct ComponentData : IComponentData
 {
-    public float fSpeed;
+    public float fValue;
+    public int iValue;
 }
 
-public class Rotater_PureComponent : ComponentDataWrapper<Rotater_Pure> { }
-
-public class RotaterSystem_Pure : JobComponentSystem
+// Hybrid  ECS
+public class ComponentData : MonoBehaviour
 {
-    struct RotationJob : IJobProcessComponentData<Rotation, Rotater_Pure>
-    {
-        public float fDeltaTime;
-
-        public void Execute(ref Rotation sRotation, [ReadOnly]ref Rotater_Pure sRotater)
-        {
-            sRotation.Value = math.mul(math.normalize(sRotation.Value), quaternion.axisAngle(math.up(), sRotater.fSpeed * fDeltaTime));
-        }
-    }
-
-    protected override JobHandle OnUpdate(JobHandle inputDeps)
-    {
-        var job = new RotationJob() { fDeltaTime = Time.deltaTime };
-        return job.Schedule(this, 64, inputDeps);
-    }
+  public float fValue;
+  public int iValue;
 }
 ```
 
-- Pure ECS의 경우 오브젝트에
-Rendrer Component -> MeshInstanceRendererComponent
-Transform Component -> Position & Rotation Component
-를 Attach해야 동작합니다.
+#### Entity
+- 컴포넌트 데이터를 가지고 있는 오브젝트입니다.
+  - 다수의 컴포넌트 데이터를 가질 수 있습니다.
+- [Hybrid 기준] Unity에서 GameObject에 기본적으로 제공되는 GameObjectEntity를 GameObject에 Attach하여야 ECS가 정상 동작합니다.
+
+#### System
+- ComponentData를 다루는 Manager격의 오브젝트입니다.
+- 권장 명명 규칙은 **~System** 입니다.
+  - Ex ) MoveSystem, PositionSystem, RotationSystem 등
+
+#### Filter & Data
+- System 내부 Struct를 말하며, 말 그대로 선언한 타입으로 Entity를 걸러냅니다.
+- GetEntities를 통해 Entity를 얻는 경우 Filter, [Inject]를 통해 상시 얻는 경우 Data라 명명하기도 합니다.
+  - Infallible Code - ECS Tutorial 비디오 내 코드 중
+- 권장 명명 규칙은 **Filter, 혹은 Data** 입니다.
+
+#### Convention Over Configuration
+- Filter 역할을 하는 Struct에 Array와 readonly int형 Length를 선언하면,
+Unity가 리플렉션을 통해 그에 맞는 길이를 변수에 넣습니다. int형 lengt 같이 유사하게 선언할 경우 작동하지 않습니다.
+- 또한 선언한 ComponentArray 타입별로 논리연산 And 조건을 체크하여 Inject Attribute를 선언할 경우 자동으로 할당합니다.
+  - 동적으로 Create, Destroy Entity를 할 경우에도 갱신됩니다.
+```csharp
+private struct Filter
+{
+  public int Length; // 이 필드는 자동으로 할당됩니다. - 옛날 버젼
+  public readonly int Length; // 이 필드는 자동으로 할당됩니다. - 최신 버젼
+  public ComponentArray<SomthingComponent> SomthingComponents
+}
+```
+
+- Component Array를 2가지 이상 선언한 경우, 2가지가 모두 들어있는 것만 필터링됩니다.
+```csharp
+// A 혹은 B만 있는 경우 Filter에 포함이 안됩니다.
+private struct Filter
+{
+    public readonly int Length; // A와 B 두개 다 들어있는 엔티티의 개수가 할당
+    public ComponentArray<SomthingComponent_A> SomthingComponents_A;
+    public ComponentArray<SomthingComponent_B> SomthingComponents_B;
+}
+```
+
+
+
+### ECS 예시
+
+#### Pure ECS
 
 #### Hybrid ECS
 ```csharp
@@ -146,23 +173,50 @@ class RotaterSystem : ComponentSystem
 }
 ```
 
+### Class & Interface
 
-#### Class & Interface
 
-- ComponentDataWrapper
 
-- ComponentSystem
+#### EntityArray
+- Filter에 추가할 경우, 조건을 만족시킨 Entity를 Array에 할당합니다.
+```csharp
+private struct Filter
+{
+    public readonly int Length; // A가 있는 엔티티 개수만 할당
+    public EntityArray Entities; // A가 있는 엔티티 Instsance를 할당
+    public SubtractiveComponent<SomthingComponent_A> SomthingComponent;
+}
+```
 
-- IComponentData
-
-- ISharedComponentData
+#### SubtractiveComponent<ComponentData>
+- Filter에 추가할 경우, 이 ComponentData가 있는 엔티티를 할당하지 않습니다.
+```csharp
+private struct Filter
+{
+    public readonly int Length; // A가 있으면서 B는 없는 엔티티의 개수만 할당
+    public ComponentArray<SomthingComponent_A> SomthingComponent_A;
+    public SubtractiveComponent<SomthingComponent_B> SomthingComponent_B;
+}
+```
 
 
 ---
 ## Job System
 
----
-## Burst Compiler
+#### JobComponentSystem
+
+#### IJobParallelFor
+```csharp
+public void Excute(int index);
+```
+- 반복문을 사용할 때 사용하는 Job입니다.
+
+
+#### EntityCommandBuffer.Concurrent
+- Job이 동작하는 중에 ( 멀티 스레드 환경에서 ) Add, Delete, Modify을 Thread-Safe하게 사용할 수 있는 버퍼입니다.
+
+#### BarrierSystem
+- 메인 스레드
 
 
 ---
