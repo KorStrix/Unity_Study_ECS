@@ -30,6 +30,9 @@ Unity는 ECS를 통해 오브젝트 중심의 디자인에서 데이터 중심�
 - Unity 2018.01 버젼 이상 설치
 - Unity - PlayerSetting - API Compatibility Level - .net 3.x -> .net 4.x로 변경
 - Unity 2018버젼부터 생긴 Package Manager - ECS 설치
+- Job System, Burst Compiler, IncrementalCompiler 설치
+  - Job System, Burst Compolier의 경우 ECS & Job System에서 사용하기 때문에 설치하며,
+  - IncrementalCompiler의 경우 ECS 코드에서 간혹 C# 7.0의 문법을 사용할 때 에러가 많은데, 이 Package가 해결해줍니다.
 
 - Visual Studio 최신으로 설치
 ( VS 버젼이 오래되었을 경우 Unity 컴파일러와 VS 컴파일러가 따로 구동되어 VS에서 ECS 관련 스크립트 작성 불가 )
@@ -77,7 +80,7 @@ Unity는 ECS를 통해 오브젝트 중심의 디자인에서 데이터 중심�
 #### ComponentData
 - 컴포넌트 데이터는 변수만 들고있는 데이터 단위입니다.
 - 권장 명명 규칙은 **~Component** 입니다.
-  - Ex ) MoveComponent, PositionComponent, RotationComponent 등
+  - Ex) MoveComponent, PositionComponent, RotationComponent 등
 ```csharp
 // Pure ECS
 [System.Serializable]
@@ -103,13 +106,19 @@ public class ComponentData : MonoBehaviour
 #### System
 - ComponentData를 다루는 Manager격의 오브젝트입니다.
 - 권장 명명 규칙은 **~System** 입니다.
-  - Ex ) MoveSystem, PositionSystem, RotationSystem 등
+  - Ex) MoveSystem, PositionSystem, RotationSystem 등
 
 #### Filter & Data
 - System 내부 Struct를 말하며, 말 그대로 선언한 타입으로 Entity를 걸러냅니다.
 - GetEntities를 통해 Entity를 얻는 경우 Filter, [Inject]를 통해 상시 얻는 경우 Data라 명명하기도 합니다.
   - Infallible Code - ECS Tutorial 비디오 내 코드 중
 - 권장 명명 규칙은 **Filter, 혹은 Data** 입니다.
+
+#### Bootstrap
+- ECS만으로는 Public 변수를 Inspector에 노출하여 사용자의 요구사항에 맞춰 설정할 수 없습니다.
+- 그래서 이 역할을 하는 Monobehaviour 기반의 단순히 변수만을 들고있다가 ECS에 설정하는 스크립트를 Bootstrap이라 합니다.
+  - 권장 명명 규칙은 **~Bootstrap** 입니다.
+  - Ex) TimeScaleBootstrap
 
 #### Convention Over Configuration
 - Filter 역할을 하는 Struct에 Array와 readonly int형 Length를 선언하면,
@@ -139,8 +148,6 @@ private struct Filter
 
 
 ### ECS 예시
-
-#### Pure ECS
 
 #### Hybrid ECS
 ```csharp
@@ -174,8 +181,6 @@ class RotaterSystem : ComponentSystem
 ```
 
 ### Class & Interface
-
-
 
 #### EntityArray
 - Filter에 추가할 경우, 조건을 만족시킨 Entity를 Array에 할당합니다.
@@ -216,7 +221,8 @@ public void Excute(int index);
 - Job이 동작하는 중에 ( 멀티 스레드 환경에서 ) Add, Delete, Modify을 Thread-Safe하게 사용할 수 있는 버퍼입니다.
 
 #### BarrierSystem
-- 메인 스레드
+- 다른 스레드에서 메인 스레드로 요청하는 메시지 큐를 생성하는 시스템입니다.
+  - Create / Destroy Entity, Add / Set / Remove Component Data 등을 요청합니다.
 
 
 ---
@@ -258,3 +264,16 @@ public void Excute(int index);
 - 유니티 및 개발 전문 방송 Infallible Code에서 설명하는 ECS 튜토리얼 입니다.
 - 10여분 정도 길이의 비디오가 총 7편으로, Hybrid ~ Pure ECS, Job System까지 슈팅게임 제작 기준으로 설명합니다.
   - https://www.youtube.com/watch?v=yzhsgaFVpZY
+
+---
+### 그 외 링크
+
+#### [Unity ECS] All of the Unity’s ECS + Job system gotchas (so far)
+- 유니티 ECS를 작업하면서 생기는 노하우 혹은 주의사항을 모아놓은 글입니다.
+  - 내용이 상당히 세부적이며 많습니다.
+- https://gametorrahod.com/all-of-the-unitys-ecs-job-system-gotchas-so-far-6ca80d82d19f
+
+#### Burst User Guide
+- 유니티 공식 Burst 컴파일러 메뉴얼 중 유저 가이드입니다.
+- 위 문서에 Burst Compiler에 대해 따로 기입하지 않는 이유는 이 링크만 보셔도 무방하기 때문입니다.
+- https://docs.unity3d.com/Packages/com.unity.burst@0.2/manual/index.html
