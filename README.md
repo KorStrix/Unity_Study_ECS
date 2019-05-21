@@ -8,8 +8,13 @@
 - **C# Joyb System(멀티 스레딩 활용 API) :** ECS는 실제 해결해야 하는 문제, 즉 게임을 구성하는 데이터와 동작을 집중적으로 다루는 코드 작성 방식입니다.
 ECS를 사용하면 디자인 측면에서 더 나은 방식의 게임 프로그래밍이 가능할 뿐 아니라, Unity의 C# 잡 시스템과 버스트 컴파일러를 더욱 효과적으로 이용하여 최첨단 멀티코어 프로세서의 기능을 빠짐없이 활용할 수 있습니다.
 Unity는 ECS를 통해 오브젝트 중심의 디자인에서 데이터 중심의 디자인으로 이동하고자 합니다. 이러한 변화를 통해 사용자 간에 코드를 이해하고 작성에 참여하거나 코드를 재사용하기가 더욱 수월해질 것입니다.
+
+
 - **Burst Compiler(고도의 최적화 컴파일러) :** 새로운 LLVM 기반의 연산 인식 백엔드 컴파일러 기술을 통해 C# 작업을 처리하고 고도로 최적화된 코드를 작성할 수 있습니다.
 또한 ECS 기반의 코드라면 코드 수정을 크게 하지 않고 쉽게 적용할 수 있습니다.
+
+  - C# 코드를 최적화된 Native 코드로 변경
+  - IL2CPP와 비슷한 개념
 
 - **ECS & JobSystem & Burst Compolier 퍼포먼스**
   - 오브젝트를 만개 단위로 뿌려 FPS 30까지 얼마나 많은 오브젝트를 동시 실행할 수 있는지
@@ -26,6 +31,7 @@ Unity는 ECS를 통해 오브젝트 중심의 디자인에서 데이터 중심�
 - 출처 링크 - 유니티 홈페이지에 소개된 설명
   - https://unity3d.com/kr/unity/features/job-system-ECS
 
+---
 ### ECS 개발 세팅
 - Unity 2018.01 버젼 이상 설치
 - Unity - PlayerSetting - API Compatibility Level - .net 3.x -> .net 4.x로 변경
@@ -41,6 +47,7 @@ Unity는 ECS를 통해 오브젝트 중심의 디자인에서 데이터 중심�
   - Brackeys / New way of CODING in Unity! ECS Tutorial
   - https://www.youtube.com/watch?v=_U9wRgQyy6s
 
+---
 ### ECS 장단점
 
 #### 장점
@@ -81,6 +88,7 @@ Unity는 ECS를 통해 오브젝트 중심의 디자인에서 데이터 중심�
 - 컴포넌트 데이터는 변수만 들고있는 데이터 단위입니다.
 - 권장 명명 규칙은 **~Component** 입니다.
   - Ex) MoveComponent, PositionComponent, RotationComponent 등
+
 ```csharp
 // Pure ECS
 [System.Serializable]
@@ -105,8 +113,14 @@ public class ComponentData : MonoBehaviour
 
 #### System
 - ComponentData를 다루는 Manager격의 오브젝트입니다.
+- System의 호출 순서는 Attribute를 통해 언제든지 변경할 수 있습니다.
 - 권장 명명 규칙은 **~System** 입니다.
   - Ex) MoveSystem, PositionSystem, RotationSystem 등
+
+#### World
+- ECS의 System을 다루는 프로그램에서 한개밖에 없는 오브젝트입니다.
+- 프로그램을 시작하면 Default World가 자동으로 생성됩니다.
+- 만약에 특정 System을 얻고싶으면 World를 통해 얻을 수 있습니다.
 
 #### Filter & Data
 - System 내부 Struct를 말하며, 말 그대로 선언한 타입으로 Entity를 걸러냅니다.
@@ -146,10 +160,14 @@ private struct Filter
 ```
 
 
-
+---
 ### ECS 예시
 
+#### Pure ECS
+
 #### Hybrid ECS
+
+
 ```csharp
 using System.Collections;
 using System.Collections.Generic;
@@ -207,8 +225,11 @@ private struct Filter
 
 ---
 ## Job System
+Job System은 유니티에서 제공하는 멀티 스레딩 API입니다.
+반드시 ECS를 써야 JobSystem을 쓰는게 아니지만, ECS의 구조면 Job System API를 사용하기 편합니다.
 
 #### JobComponentSystem
+ECS의 System에서 Job System을 사용하고 싶으면 이 클래스를 상속받아야 합니다.
 
 #### IJobParallelFor
 ```csharp
@@ -218,11 +239,18 @@ public void Excute(int index);
 
 
 #### EntityCommandBuffer.Concurrent
-- Job이 동작하는 중에 ( 멀티 스레드 환경에서 ) Add, Delete, Modify을 Thread-Safe하게 사용할 수 있는 버퍼입니다.
+- Job이 동작하는 중에 ( 멀티 스레드 환경에서 ) Add, Delete, Modify을 Thread-Safe하게 사용할 수 있는 버퍼(Queue)입니다.
 
 #### BarrierSystem
 - 다른 스레드에서 메인 스레드로 요청하는 메시지 큐를 생성하는 시스템입니다.
   - Create / Destroy Entity, Add / Set / Remove Component Data 등을 요청합니다.
+
+---
+# Burst Compiler
+Burst Compiler를 사용하려면 **Unity.Matmathics 네임스페이스에 있는 함수만 사용** 해야 하며,
+참조타입이 아닌 값형의 데이터만 처리 가능합니다.
+
+
 
 
 ---
